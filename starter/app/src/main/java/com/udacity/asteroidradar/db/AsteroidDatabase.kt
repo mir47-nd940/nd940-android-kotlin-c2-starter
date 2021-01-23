@@ -14,7 +14,7 @@ abstract class AsteroidDatabase : RoomDatabase() {
     /**
      * Connects the database to the DAO.
      */
-    abstract val asteroidDatabaseDao: AsteroidDatabaseDao
+    abstract val asteroidDao: AsteroidDao
 
     /**
      * Define a companion object, this allows us to add functions on the AsteroidDatabase class.

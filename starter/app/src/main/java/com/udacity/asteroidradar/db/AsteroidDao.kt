@@ -7,7 +7,7 @@ import androidx.room.*
  * Defines methods for using the AsteroidEntity class with Room.
  */
 @Dao
-interface AsteroidDatabaseDao {
+interface AsteroidDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(asteroid: AsteroidEntity)
 
