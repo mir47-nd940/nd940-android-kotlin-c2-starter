@@ -14,3 +14,8 @@ data class Asteroid(
     val distanceFromEarth: Double,
     val isPotentiallyHazardous: Boolean
 ) : Parcelable
+
+data class ImageOfTheDay(
+    val url: String,
+    val title: String
+)

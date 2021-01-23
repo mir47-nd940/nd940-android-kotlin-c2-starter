@@ -4,10 +4,11 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.udacity.asteroidradar.domain.Asteroid
+import com.udacity.asteroidradar.domain.ImageOfTheDay
 
 @Entity(tableName = "asteroid_table")
 data class AsteroidEntity(
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     var asteroidId: Long,
 
     @ColumnInfo(name = "name")
@@ -19,6 +20,13 @@ data class AsteroidEntity(
     var relativeVelocity: Double,
     var distanceFromEarth: Double,
     var isPotentiallyHazardous: Boolean
+)
+
+@Entity(tableName = "image_table")
+data class ImageEntity(
+    @PrimaryKey
+    var url: String,
+    var title: String
 )
 
 fun List<AsteroidEntity>.asDomainModel(): List<Asteroid> {
@@ -35,3 +43,5 @@ fun List<AsteroidEntity>.asDomainModel(): List<Asteroid> {
         )
     }
 }
+
+fun ImageEntity.asDomainModel() = ImageOfTheDay(this.url, this.title)

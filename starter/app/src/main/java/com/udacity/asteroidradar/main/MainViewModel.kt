@@ -4,14 +4,12 @@ import android.app.Application
 import androidx.lifecycle.*
 import com.udacity.asteroidradar.db.AsteroidDatabase
 import com.udacity.asteroidradar.domain.Asteroid
-import com.udacity.asteroidradar.network.NetworkAsteroid
+import com.udacity.asteroidradar.domain.ImageOfTheDay
 import com.udacity.asteroidradar.network.NasaApi.retrofitService
 import com.udacity.asteroidradar.network.getNextSevenDaysFormattedDates
 import com.udacity.asteroidradar.network.parseAsteroidsJsonResult
 import com.udacity.asteroidradar.repo.AsteroidRepository
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.json.JSONObject
 
 enum class AsteroidApiStatus { LOADING, ERROR, DONE }
@@ -30,6 +28,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val asteroids: LiveData<List<Asteroid>>
         get() = asteroidRepository.asteroids
 
+    val imageOfTheDay: LiveData<ImageOfTheDay>
+        get() = asteroidRepository.imageOfTheDay
+
     private val database = AsteroidDatabase.getInstance(application)
     private val asteroidRepository = AsteroidRepository(database)
 
@@ -39,6 +40,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     init {
         viewModelScope.launch {
             asteroidRepository.refreshAsteroids()
+            asteroidRepository.refreshImage()
         }
     }
 

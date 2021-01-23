@@ -42,6 +42,14 @@ interface NasaApiService {
         @Query("end_date") endDate: String,
         @Query("api_key") apiKey: String
     ): Response<ResponseBody>
+
+    /**
+     *
+     */
+    @GET("planetary/apod")
+    suspend fun getImageInfo(
+        @Query("api_key") apiKey: String
+    ): NetworkImageOfTheDay
 }
 
 /**

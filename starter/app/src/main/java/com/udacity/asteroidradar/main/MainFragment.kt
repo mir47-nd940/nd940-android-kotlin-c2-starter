@@ -9,6 +9,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.udacity.asteroidradar.R
 import com.udacity.asteroidradar.databinding.FragmentMainBinding
+import com.udacity.asteroidradar.util.setImageUrl
 
 class MainFragment : Fragment() {
 
@@ -30,6 +31,10 @@ class MainFragment : Fragment() {
         binding.lifecycleOwner = this
 
         binding.viewModel = viewModel
+
+        viewModel.imageOfTheDay.observe(viewLifecycleOwner, Observer { image ->
+            image?.let { setImageUrl(binding.activityMainImageOfTheDay, it.url) }
+        })
 
         viewModelAdapter = AsteroidAdapter(AsteroidClick {
             // When an asteroid is clicked this block or lambda will be called by AsteroidAdapter
