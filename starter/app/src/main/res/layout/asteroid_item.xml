@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="asteroid"
             type="com.udacity.asteroidradar.domain.Asteroid" />
@@ -16,18 +18,38 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/cardview_default_elevation"
         android:onClick="@{() -> asteroidCallback.onClick(asteroid)}"
-        >
+        android:padding="@dimen/spacing_normal"
+        tools:background="@color/app_background">
+
+        <TextView
+            android:id="@+id/text_codename"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{asteroid.codename}"
+            android:textAppearance="@style/ItemTitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="{codename}" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/cardview_light_background"
-            app:asteroidText="@{asteroid}"
-            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="@dimen/spacing_quarter"
+            android:text="@{asteroid.closeApproachDate}"
+            android:textAppearance="@style/ItemBody"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_codename"
+            tools:text="{date}" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            />
+            app:layout_constraintTop_toTopOf="parent"
+            app:statusIcon="@{asteroid.potentiallyHazardous}"
+            tools:src="@drawable/ic_status_potentially_hazardous" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
