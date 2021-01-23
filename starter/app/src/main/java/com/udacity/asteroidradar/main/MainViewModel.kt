@@ -1,13 +1,14 @@
 package com.udacity.asteroidradar.main
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import android.app.Application
+import androidx.lifecycle.*
+import com.udacity.asteroidradar.db.AsteroidDatabase
+import com.udacity.asteroidradar.domain.Asteroid
 import com.udacity.asteroidradar.network.NetworkAsteroid
 import com.udacity.asteroidradar.network.NasaApi.retrofitService
 import com.udacity.asteroidradar.network.getNextSevenDaysFormattedDates
 import com.udacity.asteroidradar.network.parseAsteroidsJsonResult
+import com.udacity.asteroidradar.repo.AsteroidRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -18,7 +19,7 @@ enum class AsteroidApiStatus { LOADING, ERROR, DONE }
 /**
  * The [ViewModel] that is attached to the [MainFragment].
  */
-class MainViewModel : ViewModel() {
+class MainViewModel(application: Application) : AndroidViewModel(application) {
     // The internal MutableLiveData that stores the status of the most recent request
     private val _status = MutableLiveData<AsteroidApiStatus>()
 
@@ -26,19 +27,19 @@ class MainViewModel : ViewModel() {
     val status: LiveData<AsteroidApiStatus>
         get() = _status
 
-    // Internally, we use a MutableLiveData, because we will be updating the List of MarsProperty
-    // with new values
-    private val _asteroids = MutableLiveData<List<NetworkAsteroid>>()
+    val asteroids: LiveData<List<Asteroid>>
+        get() = asteroidRepository.asteroids
 
-    // The external LiveData interface to the property is immutable, so only this class can modify
-    val asteroids: LiveData<List<NetworkAsteroid>>
-        get() = _asteroids
+    private val database = AsteroidDatabase.getInstance(application)
+    private val asteroidRepository = AsteroidRepository(database)
 
     /**
      * Call getMarsRealEstateProperties() on init so we can display status immediately.
      */
     init {
-        getAsteroids()
+        viewModelScope.launch {
+            asteroidRepository.refreshAsteroids()
+        }
     }
 
     /**
@@ -66,7 +67,6 @@ class MainViewModel : ViewModel() {
             } catch (e: Exception) {
                 println("mmmmm $e")
                 _status.value = AsteroidApiStatus.ERROR
-                _asteroids.value = emptyList()
             }
         }
     }

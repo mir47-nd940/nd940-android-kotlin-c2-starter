@@ -8,23 +8,30 @@ import com.udacity.asteroidradar.domain.Asteroid
 @Entity(tableName = "asteroid_table")
 data class AsteroidEntity(
     @PrimaryKey(autoGenerate = true)
-    var asteroidId: Long = 0L,
+    var asteroidId: Long,
 
     @ColumnInfo(name = "name")
-    var asteroidName: String = ""
+    var asteroidName: String,
+
+    var closeApproachDate: String,
+    var absoluteMagnitude: Double,
+    var estimatedDiameter: Double,
+    var relativeVelocity: Double,
+    var distanceFromEarth: Double,
+    var isPotentiallyHazardous: Boolean
 )
 
 fun List<AsteroidEntity>.asDomainModel(): List<Asteroid> {
     return map {
         Asteroid(
             id = it.asteroidId,
-            codename = "",
-            closeApproachDate = "",
-            absoluteMagnitude = 0.0,
-            estimatedDiameter = 0.0,
-            relativeVelocity = 0.0,
-            distanceFromEarth = 0.0,
-            isPotentiallyHazardous = false
+            codename = it.asteroidName,
+            closeApproachDate = it.closeApproachDate,
+            absoluteMagnitude = it.absoluteMagnitude,
+            estimatedDiameter = it.estimatedDiameter,
+            relativeVelocity = it.relativeVelocity,
+            distanceFromEarth = it.distanceFromEarth,
+            isPotentiallyHazardous = it.isPotentiallyHazardous
         )
     }
 }

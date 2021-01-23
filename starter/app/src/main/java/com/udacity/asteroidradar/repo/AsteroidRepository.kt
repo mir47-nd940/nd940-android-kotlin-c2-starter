@@ -37,7 +37,10 @@ class AsteroidRepository(private val database: AsteroidDatabase) {
                 endDate = dates.last(),
                 apiKey = "DEMO_KEY"
             )
+
+            @Suppress("BlockingMethodInNonBlockingContext")
             val networkAsteroids = parseAsteroidsJsonResult(JSONObject(json.body()?.string() ?: ""))
+
             database.asteroidDao.insertAll(networkAsteroids.asDatabaseModel())
         }
     }

@@ -19,8 +19,14 @@ data class NetworkAsteroid(
 fun List<NetworkAsteroid>.asDatabaseModel(): List<AsteroidEntity> {
     return map {
         AsteroidEntity(
-            asteroidId = 0L,
-            asteroidName = ""
+            asteroidId = it.id,
+            asteroidName = it.codename,
+            closeApproachDate = it.closeApproachDate,
+            absoluteMagnitude = it.absoluteMagnitude,
+            estimatedDiameter = it.estimatedDiameter,
+            relativeVelocity = it.relativeVelocity,
+            distanceFromEarth = it.distanceFromEarth,
+            isPotentiallyHazardous = it.isPotentiallyHazardous
         )
     }
 }
