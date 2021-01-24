@@ -22,20 +22,19 @@ object DailyAsteroids : AsteroidsFilter()
 object AllAsteroids : AsteroidsFilter()
 
 class AsteroidRepository(private val database: AsteroidDatabase) {
+
+    private val _asteroidsFilter: MutableLiveData<AsteroidsFilter> = MutableLiveData()
     /**
      * A list of asteroids that can be shown on the screen.
      */
-    private val _asteroids: MutableLiveData<AsteroidsFilter> = MutableLiveData()
-
-    val asteroids: LiveData<List<Asteroid>> = Transformations.switchMap(_asteroids) { filter ->
-        when (filter) {
-            WeeklyAsteroids -> Transformations.map(database.asteroidDao.getFrom(formatDate(Calendar.getInstance().time))) { it.asDomainModel() }
-            DailyAsteroids -> Transformations.map(database.asteroidDao.getFor(formatDate(Calendar.getInstance().time))) { it.asDomainModel() }
-            AllAsteroids -> Transformations.map(database.asteroidDao.getAll()) { it.asDomainModel() }
+    val asteroids: LiveData<List<Asteroid>> = Transformations.switchMap(_asteroidsFilter) { filter ->
+        val list = when (filter) {
+            WeeklyAsteroids -> database.asteroidDao.getFrom(formatDate(Calendar.getInstance().time))
+            DailyAsteroids -> database.asteroidDao.getFor(formatDate(Calendar.getInstance().time))
+            AllAsteroids -> database.asteroidDao.getAll()
         }
+        Transformations.map(list) { it.asDomainModel() }
     }
-
-    fun getFilteredAsteroids(filter: AsteroidsFilter) = _asteroids.postValue(filter)
 
     /**
      * A list of asteroids that can be shown on the screen.
@@ -64,7 +63,6 @@ class AsteroidRepository(private val database: AsteroidDatabase) {
 
                 @Suppress("BlockingMethodInNonBlockingContext")
                 val networkAsteroids = parseAsteroidsJsonResult(JSONObject(json.body()?.string() ?: ""))
-                database.asteroidDao.clear()
                 database.asteroidDao.insertAll(networkAsteroids.asDatabaseModel())
             } catch (e: Exception) {
                 // Prevent app crash, in case there is an error loading data
@@ -98,4 +96,6 @@ class AsteroidRepository(private val database: AsteroidDatabase) {
             }
         }
     }
+
+    fun getFilteredAsteroids(filter: AsteroidsFilter) = _asteroidsFilter.postValue(filter)
 }
