@@ -1,11 +1,9 @@
 package com.udacity.asteroidradar.network
 
-import android.os.Parcelable
+import com.squareup.moshi.Json
 import com.udacity.asteroidradar.db.AsteroidEntity
 import com.udacity.asteroidradar.db.ImageEntity
-import kotlinx.android.parcel.Parcelize
 
-@Parcelize
 data class NetworkAsteroid(
     val id: Long,
     val codename: String,
@@ -15,12 +13,13 @@ data class NetworkAsteroid(
     val relativeVelocity: Double,
     val distanceFromEarth: Double,
     val isPotentiallyHazardous: Boolean
-) : Parcelable
+)
 
-data class NetworkImageOfTheDay(
-    val url: String,
-    val media_type: String,
-    val title: String
+data class NetworkPictureOfDay(
+    @Json(name = "media_type")
+    val mediaType: String,
+    val title: String,
+    val url: String
 )
 
 fun List<NetworkAsteroid>.asDatabaseModel(): List<AsteroidEntity> {
@@ -38,4 +37,4 @@ fun List<NetworkAsteroid>.asDatabaseModel(): List<AsteroidEntity> {
     }
 }
 
-fun NetworkImageOfTheDay.asDatabaseModel() = ImageEntity(this.url, this.title)
+fun NetworkPictureOfDay.asDatabaseModel() = ImageEntity(this.url, this.title)

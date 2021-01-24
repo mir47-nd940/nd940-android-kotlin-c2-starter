@@ -72,7 +72,7 @@ class AsteroidRepository(private val database: AsteroidDatabase) {
         withContext(Dispatchers.IO) {
             try {
                 val image = NasaApi.retrofitService.getImageInfo(apiKey = BuildConfig.NASA_API_KEY)
-                if ("image" == image.media_type) {
+                if ("image" == image.mediaType) {
                     database.imageDao.clear()
                     database.imageDao.insert(image.asDatabaseModel())
                 }
