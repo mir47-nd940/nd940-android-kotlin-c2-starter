@@ -21,9 +21,8 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
-import com.bumptech.glide.Glide
+import com.squareup.picasso.Picasso
 import com.udacity.asteroidradar.R
-import com.udacity.asteroidradar.domain.Asteroid
 
 /**
  * Binding adapter used to hide the spinner once data is available
@@ -34,23 +33,11 @@ fun goneIfNotNull(view: View, it: Any?) {
 }
 
 /**
- * Binding adapter used to display images from URL using Glide
+ * Binding adapter used to display images from URL using Picasso
  */
 @BindingAdapter("imageUrl")
 fun setImageUrl(imageView: ImageView, url: String) {
-    Glide.with(imageView.context).load(url).into(imageView)
-}
-
-/**
- * Binding adapter used to display images from URL using Glide
- */
-@BindingAdapter("asteroidText")
-fun setAsteroidText(textView: TextView, item: Asteroid) {
-    val text = "id = ${item.id}" +
-            "\ncodename = ${item.codename}" +
-            "\ncloseApproachDate = ${item.closeApproachDate}" +
-            "\nisPotentiallyHazardous = ${item.isPotentiallyHazardous}"
-    textView.text = text
+    Picasso.with(imageView.context).load(url).into(imageView)
 }
 
 @BindingAdapter("statusIcon")
