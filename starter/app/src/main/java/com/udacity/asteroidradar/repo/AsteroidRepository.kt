@@ -2,6 +2,7 @@ package com.udacity.asteroidradar.repo
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
+import com.udacity.asteroidradar.BuildConfig
 import com.udacity.asteroidradar.network.NasaApi
 import com.udacity.asteroidradar.network.getNextSevenDaysFormattedDates
 import com.udacity.asteroidradar.db.AsteroidDatabase
@@ -38,18 +39,23 @@ class AsteroidRepository(private val database: AsteroidDatabase) {
      */
     suspend fun refreshAsteroids() {
         withContext(Dispatchers.IO) {
-            val dates = getNextSevenDaysFormattedDates()
-            val json = NasaApi.retrofitService.getNeoJson(
-                startDate = dates.first(),
-                endDate = dates.last(),
-                apiKey = "DEMO_KEY"
-            )
+            try {
+                val dates = getNextSevenDaysFormattedDates()
+                val json = NasaApi.retrofitService.getNeoJson(
+                    startDate = dates.first(),
+                    endDate = dates.last(),
+                    apiKey = BuildConfig.NASA_API_KEY
+                )
 
-            @Suppress("BlockingMethodInNonBlockingContext")
-            val networkAsteroids = parseAsteroidsJsonResult(JSONObject(json.body()?.string() ?: ""))
-
-            database.asteroidDao.clear()
-            database.asteroidDao.insertAll(networkAsteroids.asDatabaseModel())
+                @Suppress("BlockingMethodInNonBlockingContext")
+                val networkAsteroids = parseAsteroidsJsonResult(JSONObject(json.body()?.string() ?: ""))
+                database.asteroidDao.clear()
+                database.asteroidDao.insertAll(networkAsteroids.asDatabaseModel())
+            } catch (e: Exception) {
+                // Prevent app crash, in case there is an error loading data
+                // TODO: these type of errors should be reported to a crash reporting service e.g. Firebase Crashlytics
+                println(e)
+            }
         }
     }
 
@@ -64,10 +70,16 @@ class AsteroidRepository(private val database: AsteroidDatabase) {
      */
     suspend fun refreshImage() {
         withContext(Dispatchers.IO) {
-            val image = NasaApi.retrofitService.getImageInfo(apiKey = "DEMO_KEY")
-            if ("image" == image.media_type) {
-                database.imageDao.clear()
-                database.imageDao.insert(image.asDatabaseModel())
+            try {
+                val image = NasaApi.retrofitService.getImageInfo(apiKey = BuildConfig.NASA_API_KEY)
+                if ("image" == image.media_type) {
+                    database.imageDao.clear()
+                    database.imageDao.insert(image.asDatabaseModel())
+                }
+            } catch (e: Exception) {
+                // Prevent app crash, in case there is an error loading data.
+                // TODO: these type of errors should be reported to a crash reporting service e.g. Firebase Crashlytics
+                println(e)
             }
         }
     }

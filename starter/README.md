@@ -1,6 +1,6 @@
-# Purpose of this Folder
+# Configure Build
 
-This folder should contain the scaffolded project files to get a student started on their project. This repo will be added to the Classroom for students to use, so please do not have any solutions in this folder.
+To build and use this project, you need to add your NASA API key to `local.properties`. See `local.properties.example` for an example.
 
 ## Note: Android Kotlin Gradle Update
 Use the updated Gradle version in the `~/gradle/wrapper/gradle-wrapper.properties` file:

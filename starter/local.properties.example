@@ -1,0 +1,4 @@
+# Copy the contents of this file into your local.properties file,
+# and update the values based on your configuration.
+sdk.dir=C\:\\Users\\User\\AppData\\Local\\Android\\Sdk
+nasaApiKey="abc123"

@@ -9,7 +9,7 @@ import androidx.room.RoomDatabase
  * A database that stores Asteroid information.
  * And a global method to get access to the database.
  */
-@Database(entities = [AsteroidEntity::class, ImageEntity::class], version = 2, exportSchema = false)
+@Database(entities = [AsteroidEntity::class, ImageEntity::class], version = 1, exportSchema = false)
 abstract class AsteroidDatabase : RoomDatabase() {
     /**
      * Connects the database to the DAO.

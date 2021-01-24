@@ -55,7 +55,10 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel.asteroids.observe(viewLifecycleOwner, Observer { asteroids ->
             asteroids?.let {
+                println("mmmmm asteroids size = ${asteroids.size}")
                 viewModelAdapter?.asteroids = asteroids
+            } ?: run {
+                println("mmmmm asteroids null")
             }
         })
     }
