@@ -8,6 +8,8 @@ import com.udacity.asteroidradar.domain.ImageOfTheDay
 import com.udacity.asteroidradar.network.NasaApi.retrofitService
 import com.udacity.asteroidradar.network.parseAsteroidsJsonResult
 import com.udacity.asteroidradar.repo.AsteroidRepository
+import com.udacity.asteroidradar.repo.AsteroidsFilter
+import com.udacity.asteroidradar.repo.WeeklyAsteroids
 import com.udacity.asteroidradar.util.getNextSevenDaysFormattedDates
 import kotlinx.coroutines.launch
 import org.json.JSONObject
@@ -38,6 +40,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
      * Call getMarsRealEstateProperties() on init so we can display status immediately.
      */
     init {
+        getFilteredAsteroids(WeeklyAsteroids)
         viewModelScope.launch {
             asteroidRepository.refreshAsteroids()
             asteroidRepository.refreshImage()
@@ -73,11 +76,5 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-//    suspend fun refreshVideos() {
-//        withContext(Dispatchers.IO) {
-//            val playlist = Network.devbytes.getPlaylist().await()
-//            database.videoDao.insertAll(*playlist.asDatabaseModel())
-//        }
-//    }
-
+    fun getFilteredAsteroids(filter: AsteroidsFilter) = asteroidRepository.getFilteredAsteroids(filter)
 }

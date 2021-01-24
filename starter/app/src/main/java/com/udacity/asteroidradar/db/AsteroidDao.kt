@@ -33,10 +33,28 @@ interface AsteroidDao {
 
     /**
      * Selects and returns all rows in the table,
-     * sorted by id in descending order.
+     * sorted by date in ascending order.
      */
-    @Query("SELECT * FROM asteroid_table WHERE closeApproachDate >= :fromDate ORDER BY closeApproachDate ASC")
-    fun getAll(fromDate: String): LiveData<List<AsteroidEntity>>
+    @Query("SELECT * FROM asteroid_table ORDER BY closeApproachDate ASC")
+    fun getAll(): LiveData<List<AsteroidEntity>>
+
+    /**
+     * Selects and returns the rows in the table starting from the specified date,
+     * sorted by date in ascending order.
+     *
+     * @param date date from which the asteroids are to be retrieved
+     */
+    @Query("SELECT * FROM asteroid_table WHERE closeApproachDate >= :date ORDER BY closeApproachDate ASC")
+    fun getFrom(date: String): LiveData<List<AsteroidEntity>>
+
+    /**
+     * Selects and returns the rows in the table for the specified date,
+     * sorted by date in ascending order.
+     *
+     * @param date date for which the asteroids are to be retrieved
+     */
+    @Query("SELECT * FROM asteroid_table WHERE closeApproachDate = :date ORDER BY closeApproachDate ASC")
+    fun getFor(date: String): LiveData<List<AsteroidEntity>>
 
     /**
      * Deletes all values from the table.

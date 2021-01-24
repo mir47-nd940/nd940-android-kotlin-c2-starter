@@ -1,7 +1,6 @@
 package com.udacity.asteroidradar.repo
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.*
 import com.udacity.asteroidradar.BuildConfig
 import com.udacity.asteroidradar.network.NasaApi
 import com.udacity.asteroidradar.db.AsteroidDatabase
@@ -17,14 +16,26 @@ import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.util.*
 
+sealed class AsteroidsFilter
+object WeeklyAsteroids : AsteroidsFilter()
+object DailyAsteroids : AsteroidsFilter()
+object AllAsteroids : AsteroidsFilter()
+
 class AsteroidRepository(private val database: AsteroidDatabase) {
     /**
      * A list of asteroids that can be shown on the screen.
      */
-    val asteroids: LiveData<List<Asteroid>> =
-        Transformations.map(database.asteroidDao.getAll(
-            formatDate(Calendar.getInstance().time))
-        ) { it.asDomainModel() }
+    private val _asteroids: MutableLiveData<AsteroidsFilter> = MutableLiveData()
+
+    val asteroids: LiveData<List<Asteroid>> = Transformations.switchMap(_asteroids) { filter ->
+        when (filter) {
+            WeeklyAsteroids -> Transformations.map(database.asteroidDao.getFrom(formatDate(Calendar.getInstance().time))) { it.asDomainModel() }
+            DailyAsteroids -> Transformations.map(database.asteroidDao.getFor(formatDate(Calendar.getInstance().time))) { it.asDomainModel() }
+            AllAsteroids -> Transformations.map(database.asteroidDao.getAll()) { it.asDomainModel() }
+        }
+    }
+
+    fun getFilteredAsteroids(filter: AsteroidsFilter) = _asteroids.postValue(filter)
 
     /**
      * A list of asteroids that can be shown on the screen.

@@ -9,6 +9,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.udacity.asteroidradar.R
 import com.udacity.asteroidradar.databinding.FragmentMainBinding
+import com.udacity.asteroidradar.repo.AllAsteroids
+import com.udacity.asteroidradar.repo.DailyAsteroids
+import com.udacity.asteroidradar.repo.WeeklyAsteroids
 import com.udacity.asteroidradar.util.setImageUrl
 
 class MainFragment : Fragment() {
@@ -69,6 +72,11 @@ class MainFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.next_week_asteroids -> viewModel.getFilteredAsteroids(WeeklyAsteroids)
+            R.id.today_asteroids -> viewModel.getFilteredAsteroids(DailyAsteroids)
+            R.id.saved_asteroids -> viewModel.getFilteredAsteroids(AllAsteroids)
+        }
         return true
     }
 }
