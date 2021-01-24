@@ -1,9 +1,7 @@
 package com.udacity.asteroidradar.network
 
-import com.udacity.asteroidradar.Constants
+import com.udacity.asteroidradar.util.getNextSevenDaysFormattedDates
 import org.json.JSONObject
-import java.text.SimpleDateFormat
-import java.util.*
 import kotlin.collections.ArrayList
 
 fun parseAsteroidsJsonResult(jsonResult: JSONObject): ArrayList<NetworkAsteroid> {
@@ -39,18 +37,4 @@ fun parseAsteroidsJsonResult(jsonResult: JSONObject): ArrayList<NetworkAsteroid>
     }
 
     return asteroidNeoList
-}
-
-fun getNextSevenDaysFormattedDates(): ArrayList<String> {
-    val formattedDateList = ArrayList<String>()
-
-    val calendar = Calendar.getInstance()
-    for (i in 0..Constants.DEFAULT_END_DATE_DAYS) {
-        val currentTime = calendar.time
-        val dateFormat = SimpleDateFormat(Constants.API_QUERY_DATE_FORMAT, Locale.getDefault())
-        formattedDateList.add(dateFormat.format(currentTime))
-        calendar.add(Calendar.DAY_OF_YEAR, 1)
-    }
-
-    return formattedDateList
 }

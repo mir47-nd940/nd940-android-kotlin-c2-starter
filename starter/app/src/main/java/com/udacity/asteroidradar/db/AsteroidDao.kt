@@ -35,8 +35,8 @@ interface AsteroidDao {
      * Selects and returns all rows in the table,
      * sorted by id in descending order.
      */
-    @Query("SELECT * FROM asteroid_table ORDER BY asteroidId DESC")
-    fun getAll(): LiveData<List<AsteroidEntity>>
+    @Query("SELECT * FROM asteroid_table WHERE closeApproachDate >= :fromDate ORDER BY closeApproachDate ASC")
+    fun getAll(fromDate: String): LiveData<List<AsteroidEntity>>
 
     /**
      * Deletes all values from the table.

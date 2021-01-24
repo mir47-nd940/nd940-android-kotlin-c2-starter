@@ -4,23 +4,27 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
 import com.udacity.asteroidradar.BuildConfig
 import com.udacity.asteroidradar.network.NasaApi
-import com.udacity.asteroidradar.network.getNextSevenDaysFormattedDates
 import com.udacity.asteroidradar.db.AsteroidDatabase
 import com.udacity.asteroidradar.db.asDomainModel
 import com.udacity.asteroidradar.domain.Asteroid
 import com.udacity.asteroidradar.domain.ImageOfTheDay
 import com.udacity.asteroidradar.network.asDatabaseModel
 import com.udacity.asteroidradar.network.parseAsteroidsJsonResult
+import com.udacity.asteroidradar.util.formatDate
+import com.udacity.asteroidradar.util.getNextSevenDaysFormattedDates
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import java.util.*
 
 class AsteroidRepository(private val database: AsteroidDatabase) {
     /**
      * A list of asteroids that can be shown on the screen.
      */
     val asteroids: LiveData<List<Asteroid>> =
-        Transformations.map(database.asteroidDao.getAll()) { it.asDomainModel() }
+        Transformations.map(database.asteroidDao.getAll(
+            formatDate(Calendar.getInstance().time))
+        ) { it.asDomainModel() }
 
     /**
      * A list of asteroids that can be shown on the screen.

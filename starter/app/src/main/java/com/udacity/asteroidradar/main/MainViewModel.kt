@@ -6,9 +6,9 @@ import com.udacity.asteroidradar.db.AsteroidDatabase
 import com.udacity.asteroidradar.domain.Asteroid
 import com.udacity.asteroidradar.domain.ImageOfTheDay
 import com.udacity.asteroidradar.network.NasaApi.retrofitService
-import com.udacity.asteroidradar.network.getNextSevenDaysFormattedDates
 import com.udacity.asteroidradar.network.parseAsteroidsJsonResult
 import com.udacity.asteroidradar.repo.AsteroidRepository
+import com.udacity.asteroidradar.util.getNextSevenDaysFormattedDates
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 
