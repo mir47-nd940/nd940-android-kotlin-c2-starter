@@ -8,14 +8,20 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="ItemTitle" parent="AppTheme">
+    <style name="TextMain" parent="AppTheme">
         <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">@dimen/text_size_xlarge</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="ItemTitle" parent="AppTheme">
+        <item name="android:textColor">@color/text_title</item>
         <item name="android:textSize">@dimen/text_size_large</item>
         <item name="android:textStyle">bold</item>
     </style>
 
     <style name="ItemBody" parent="AppTheme">
-        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textColor">@color/text_body</item>
         <item name="android:textSize">@dimen/text_size_normal</item>
     </style>
 

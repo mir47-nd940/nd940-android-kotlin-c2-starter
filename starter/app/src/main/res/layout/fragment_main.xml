@@ -35,7 +35,7 @@
             android:background="@color/text_background"
             android:padding="@dimen/spacing_normal"
             android:text="@string/image_of_the_day"
-            android:textAppearance="@style/ItemTitle"
+            android:textAppearance="@style/TextMain"
             app:layout_constraintBottom_toBottomOf="@+id/image_of_the_day"
             app:layout_constraintStart_toStartOf="parent" />
 

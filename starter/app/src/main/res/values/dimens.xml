@@ -3,6 +3,7 @@
     <dimen name="spacing_normal">16dp</dimen>
     <dimen name="spacing_half">8dp</dimen>
     <dimen name="spacing_quarter">4dp</dimen>
+    <dimen name="text_size_xlarge">20sp</dimen>
     <dimen name="text_size_large">18sp</dimen>
     <dimen name="text_size_normal">16sp</dimen>
     <dimen name="image_of_the_day_height">220dp</dimen>
