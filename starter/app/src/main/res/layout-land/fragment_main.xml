@@ -18,11 +18,10 @@
 
         <ImageView
             android:id="@+id/image_of_the_day"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/image_of_the_day_height"
+            android:layout_width="@dimen/image_landscape_width"
+            android:layout_height="match_parent"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:srcCompat="@drawable/placeholder" />
@@ -35,13 +34,13 @@
             android:layout_margin="@dimen/spacing_half"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/image_of_the_day"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/image_of_the_day"
             app:layout_constraintTop_toTopOf="@id/image_text"
             tools:visibility="visible" />
 
         <TextView
             android:id="@+id/image_text"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:background="@color/text_background"
@@ -55,11 +54,11 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/list"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="match_parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/image_of_the_day"
+            app:layout_constraintStart_toEndOf="@id/image_of_the_day"
+            app:layout_constraintTop_toTopOf="parent"
             tools:listitem="@layout/item_asteroid" />
 
         <ProgressBar
@@ -68,10 +67,10 @@
             android:layout_height="wrap_content"
             android:indeterminate="true"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/image_of_the_day"
+            app:layout_constraintBottom_toBottomOf="@id/list"
+            app:layout_constraintEnd_toEndOf="@id/list"
+            app:layout_constraintStart_toStartOf="@id/list"
+            app:layout_constraintTop_toTopOf="@id/list"
             tools:visibility="visible" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
