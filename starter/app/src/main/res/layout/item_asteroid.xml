@@ -11,7 +11,7 @@
 
         <variable
             name="listener"
-            type="com.udacity.asteroidradar.main.AsteroidAdapter.AsteroidListEvents" />
+            type="com.udacity.asteroidradar.ui.main.AsteroidAdapter.AsteroidListEvents" />
 
     </data>
 

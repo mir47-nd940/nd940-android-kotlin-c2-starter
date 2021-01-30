@@ -1,4 +1,4 @@
-package com.udacity.asteroidradar.main
+package com.udacity.asteroidradar.ui.main
 
 import android.content.Context.MODE_PRIVATE
 import android.os.Bundle
