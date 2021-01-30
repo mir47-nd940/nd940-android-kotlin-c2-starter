@@ -2,6 +2,7 @@ package com.udacity.asteroidradar.network
 
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import com.udacity.asteroidradar.BuildConfig
 import com.udacity.asteroidradar.Constants.BASE_URL
 import okhttp3.ResponseBody
 import retrofit2.Response
@@ -40,7 +41,7 @@ interface NasaApiService {
     suspend fun getNeoJson(
         @Query("start_date") startDate: String,
         @Query("end_date") endDate: String,
-        @Query("api_key") apiKey: String
+        @Query("api_key") apiKey: String = BuildConfig.NASA_API_KEY
     ): Response<ResponseBody>
 
     /**
@@ -48,7 +49,7 @@ interface NasaApiService {
      */
     @GET("planetary/apod")
     suspend fun getImageInfo(
-        @Query("api_key") apiKey: String
+        @Query("api_key") apiKey: String = BuildConfig.NASA_API_KEY
     ): NetworkPictureOfDay
 }
 

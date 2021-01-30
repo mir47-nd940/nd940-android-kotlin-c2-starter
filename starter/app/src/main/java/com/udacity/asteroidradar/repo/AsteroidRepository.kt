@@ -1,7 +1,6 @@
 package com.udacity.asteroidradar.repo
 
 import androidx.lifecycle.*
-import com.udacity.asteroidradar.BuildConfig
 import com.udacity.asteroidradar.network.NasaApi
 import com.udacity.asteroidradar.db.AsteroidDatabase
 import com.udacity.asteroidradar.db.asDomainModel
@@ -55,14 +54,12 @@ class AsteroidRepository(private val database: AsteroidDatabase) {
         withContext(Dispatchers.IO) {
             try {
                 val dates = getNextSevenDaysFormattedDates()
-                val json = NasaApi.retrofitService.getNeoJson(
-                    startDate = dates.first(),
-                    endDate = dates.last(),
-                    apiKey = BuildConfig.NASA_API_KEY
-                )
+                val json = NasaApi.retrofitService.getNeoJson(dates.first(), dates.last())
 
                 @Suppress("BlockingMethodInNonBlockingContext")
-                val networkAsteroids = parseAsteroidsJsonResult(JSONObject(json.body()?.string() ?: ""))
+                val jsonObject = JSONObject(json.body()?.string() ?: "")
+
+                val networkAsteroids = parseAsteroidsJsonResult(jsonObject, dates)
                 database.asteroidDao.insertAll(networkAsteroids.asDatabaseModel())
             } catch (e: Exception) {
                 // Prevent app crash, in case there is an error loading data
@@ -84,7 +81,7 @@ class AsteroidRepository(private val database: AsteroidDatabase) {
     suspend fun refreshImage() {
         withContext(Dispatchers.IO) {
             try {
-                val image = NasaApi.retrofitService.getImageInfo(apiKey = BuildConfig.NASA_API_KEY)
+                val image = NasaApi.retrofitService.getImageInfo()
                 if ("image" == image.mediaType) {
                     database.imageDao.clear()
                     database.imageDao.insert(image.asDatabaseModel())
