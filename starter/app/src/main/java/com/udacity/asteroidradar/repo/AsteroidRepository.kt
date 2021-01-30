@@ -15,6 +15,7 @@ import com.udacity.asteroidradar.util.getNextSevenDaysFormattedDates
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import timber.log.Timber
 import java.util.*
 
 sealed class AsteroidsFilter
@@ -72,8 +73,7 @@ class AsteroidRepository(private val database: AsteroidDatabase) {
             } catch (e: Exception) {
                 // Prevent app crash, in case there is an error loading data
                 // TODO: these type of errors should be reported to a crash reporting service e.g. Firebase Crashlytics
-                // TODO: log using Timber
-                println(e)
+                Timber.e(e)
             }
         }
     }
@@ -98,8 +98,7 @@ class AsteroidRepository(private val database: AsteroidDatabase) {
             } catch (e: Exception) {
                 // Prevent app crash, in case there is an error loading data.
                 // TODO: these type of errors should be reported to a crash reporting service e.g. Firebase Crashlytics
-                // TODO: log using Timber
-                println(e)
+                Timber.e(e)
             }
         }
     }
