@@ -7,6 +7,7 @@ import com.udacity.asteroidradar.domain.Asteroid
 import com.udacity.asteroidradar.domain.ImageOfTheDay
 import com.udacity.asteroidradar.repo.AsteroidRepository
 import com.udacity.asteroidradar.repo.AsteroidsFilter
+import com.udacity.asteroidradar.repo.Weekly
 import kotlinx.coroutines.launch
 
 enum class AsteroidApiStatus { LOADING, ERROR, DONE }
@@ -30,6 +31,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private val database = AsteroidDatabase.getInstance(application)
     private val asteroidRepository = AsteroidRepository(database)
+
+    init {
+        loadAsteroids(Weekly)
+    }
 
     fun loadAsteroids(filter: AsteroidsFilter) = asteroidRepository.loadAsteroids(filter)
 

@@ -9,7 +9,7 @@ import com.udacity.asteroidradar.databinding.ItemAsteroidBinding
 import com.udacity.asteroidradar.domain.Asteroid
 
 // TODO: For an extra challenge, update this to use the paging library.
-class AsteroidAdapter(private val listener: OnItemClickListener) :
+class AsteroidAdapter(private val listener: AsteroidListEvents) :
     ListAdapter<Asteroid, AsteroidAdapter.AsteroidViewHolder>(ASTEROID_COMPARATOR) {
 
     /**
@@ -32,20 +32,26 @@ class AsteroidAdapter(private val listener: OnItemClickListener) :
         currentItem?.let { holder.bind(it, listener) }
     }
 
+    override fun onCurrentListChanged(previousList: List<Asteroid>, currentList: List<Asteroid>) {
+        super.onCurrentListChanged(previousList, currentList)
+        listener.onListChanged()
+    }
+
     /**
      * ViewHolder for Asteroid items. All work is done by data binding.
      */
     class AsteroidViewHolder(private val binding: ItemAsteroidBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(asteroid: Asteroid, listener: OnItemClickListener) {
+        fun bind(asteroid: Asteroid, listener: AsteroidListEvents) {
             binding.item = asteroid
             binding.listener = listener
         }
     }
 
-    fun interface OnItemClickListener {
+    interface AsteroidListEvents {
         fun onItemClick(asteroid: Asteroid)
+        fun onListChanged()
     }
 
     companion object {

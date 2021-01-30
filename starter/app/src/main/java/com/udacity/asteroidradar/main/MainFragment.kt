@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.udacity.asteroidradar.R
 import com.udacity.asteroidradar.databinding.FragmentMainBinding
+import com.udacity.asteroidradar.domain.Asteroid
 import com.udacity.asteroidradar.repo.All
 import com.udacity.asteroidradar.repo.Daily
 import com.udacity.asteroidradar.repo.Weekly
@@ -46,10 +47,15 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             }
         })
 
-        val asteroidAdapter = AsteroidAdapter {
-            // asteroid item click handler
-            findNavController().navigate(MainFragmentDirections.actionShowDetail(it))
-        }
+        val asteroidAdapter = AsteroidAdapter(object : AsteroidAdapter.AsteroidListEvents {
+            override fun onItemClick(asteroid: Asteroid) {
+                findNavController().navigate(MainFragmentDirections.actionShowDetail(asteroid))
+            }
+
+            override fun onListChanged() {
+                binding.list.layoutManager?.scrollToPosition(0)
+            }
+        })
 
         binding.list.apply {
             layoutManager = LinearLayoutManager(context)
@@ -66,9 +72,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
          * When app started for the first time, we should update asteroids from network, then
          * daily updates will be handled by [com.udacity.asteroidradar.work.RefreshDataWorker]
          */
-        if (isInitialDataLoaded()) {
-            viewModel.loadAsteroids(Weekly)
-        } else {
+        if (!isInitialDataLoaded()) {
             viewModel.updateAsteroids()
             setInitialDataLoaded()
         }
