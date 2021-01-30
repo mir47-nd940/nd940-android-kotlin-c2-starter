@@ -2,7 +2,10 @@ package com.udacity.asteroidradar.main
 
 import android.content.Context.MODE_PRIVATE
 import android.os.Bundle
-import android.view.*
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -27,11 +30,6 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         ViewModelProvider(this).get(MainViewModel::class.java)
     }
 
-    /**
-     * RecyclerView Adapter for converting a list of asteroids to views.
-     */
-    private var asteroidAdapter: AsteroidAdapter? = null
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentMainBinding.bind(view)
@@ -42,14 +40,16 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         binding.progressImage.isVisible = true
         viewModel.imageOfTheDay.observe(viewLifecycleOwner, { image ->
             image?.let {
-                setImageUrl(binding.imageOfTheDay, it.url) { binding.progressImage.isVisible = false }
+                setImageUrl(binding.imageOfTheDay, it.url) {
+                    binding.progressImage.isVisible = false
+                }
             }
         })
 
-        asteroidAdapter = AsteroidAdapter(AsteroidClick {
-            // asteroid click handler
+        val asteroidAdapter = AsteroidAdapter {
+            // asteroid item click handler
             findNavController().navigate(MainFragmentDirections.actionShowDetail(it))
-        })
+        }
 
         binding.list.apply {
             layoutManager = LinearLayoutManager(context)
@@ -59,12 +59,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         binding.progressList.isVisible = true
         viewModel.asteroids.observe(viewLifecycleOwner, { asteroids ->
             binding.progressList.isVisible = false
-            asteroids?.let {
-                println("mmmmm asteroids size = ${asteroids.size}")
-                asteroidAdapter?.asteroids = asteroids
-            } ?: run {
-                println("mmmmm asteroids null")
-            }
+            asteroids?.let { asteroidAdapter.submitList(it) }
         })
 
         /**

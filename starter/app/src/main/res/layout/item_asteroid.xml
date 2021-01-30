@@ -6,19 +6,19 @@
     <data>
 
         <variable
-            name="asteroid"
+            name="item"
             type="com.udacity.asteroidradar.domain.Asteroid" />
 
         <variable
-            name="asteroidCallback"
-            type="com.udacity.asteroidradar.main.AsteroidClick" />
+            name="listener"
+            type="com.udacity.asteroidradar.main.AsteroidAdapter.OnItemClickListener" />
 
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="@{() -> asteroidCallback.onClick(asteroid)}"
+        android:onClick="@{() -> listener.onItemClick(item)}"
         android:padding="@dimen/spacing_normal"
         tools:background="@color/app_background">
 
@@ -26,7 +26,7 @@
             android:id="@+id/text_codename"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{asteroid.codename}"
+            android:text="@{item.codename}"
             android:textAppearance="@style/ItemTitle"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -36,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_quarter"
-            android:text="@{asteroid.closeApproachDate}"
+            android:text="@{item.closeApproachDate}"
             android:textAppearance="@style/ItemBody"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/text_codename"
@@ -48,7 +48,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:statusIcon="@{asteroid.potentiallyHazardous}"
+            app:statusIcon="@{item.potentiallyHazardous}"
             tools:src="@drawable/ic_status_potentially_hazardous" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
