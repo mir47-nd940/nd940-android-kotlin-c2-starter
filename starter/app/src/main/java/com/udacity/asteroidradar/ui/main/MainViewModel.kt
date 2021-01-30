@@ -1,4 +1,4 @@
-package com.udacity.asteroidradar.main
+package com.udacity.asteroidradar.ui.main
 
 import android.app.Application
 import androidx.lifecycle.*
@@ -8,6 +8,7 @@ import com.udacity.asteroidradar.domain.ImageOfTheDay
 import com.udacity.asteroidradar.repo.AsteroidRepository
 import com.udacity.asteroidradar.repo.AsteroidsFilter
 import com.udacity.asteroidradar.repo.Weekly
+import com.udacity.asteroidradar.util.getNextSevenDaysFormattedDates
 import kotlinx.coroutines.launch
 
 enum class AsteroidApiStatus { LOADING, ERROR, DONE }
@@ -39,7 +40,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun loadAsteroids(filter: AsteroidsFilter) = asteroidRepository.loadAsteroids(filter)
 
     fun updateAsteroids() = viewModelScope.launch {
-        asteroidRepository.refreshAsteroids()
+        asteroidRepository.refreshAsteroids(getNextSevenDaysFormattedDates())
         asteroidRepository.refreshImage()
     }
 }

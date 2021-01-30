@@ -5,6 +5,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.udacity.asteroidradar.db.AsteroidDatabase
 import com.udacity.asteroidradar.repo.AsteroidRepository
+import com.udacity.asteroidradar.util.getNextSevenDaysFormattedDates
 import retrofit2.HttpException
 
 class RefreshDataWorker(appContext: Context, params: WorkerParameters):
@@ -19,7 +20,9 @@ class RefreshDataWorker(appContext: Context, params: WorkerParameters):
         val repository = AsteroidRepository(database)
 
         return try {
-            repository.refreshAsteroids()
+            val dates = getNextSevenDaysFormattedDates()
+            repository.refreshAsteroids(dates)
+            repository.purgeAsteroidsBeforeDate(dates.first())
             repository.refreshImage()
             Result.success()
         } catch (e: HttpException) {
