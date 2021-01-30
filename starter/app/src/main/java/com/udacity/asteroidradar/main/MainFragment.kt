@@ -3,6 +3,7 @@ package com.udacity.asteroidradar.main
 import android.content.Context.MODE_PRIVATE
 import android.os.Bundle
 import android.view.*
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -17,7 +18,10 @@ import com.udacity.asteroidradar.util.setImageUrl
 /**
  * Main screen for displaying the image of the day and a list of asteroids.
  */
-class MainFragment : Fragment() {
+class MainFragment : Fragment(R.layout.fragment_main) {
+
+    private var _binding: FragmentMainBinding? = null
+    private val binding get() = _binding!!
 
     private val viewModel: MainViewModel by lazy {
         ViewModelProvider(this).get(MainViewModel::class.java)
@@ -28,18 +32,18 @@ class MainFragment : Fragment() {
      */
     private var asteroidAdapter: AsteroidAdapter? = null
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val binding = FragmentMainBinding.inflate(inflater)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        _binding = FragmentMainBinding.bind(view)
         binding.lifecycleOwner = this
 
         binding.viewModel = viewModel
 
+        binding.progressImage.isVisible = true
         viewModel.imageOfTheDay.observe(viewLifecycleOwner, { image ->
-            image?.let { setImageUrl(binding.activityMainImageOfTheDay, it.url) }
+            image?.let {
+                setImageUrl(binding.imageOfTheDay, it.url) { binding.progressImage.isVisible = false }
+            }
         })
 
         asteroidAdapter = AsteroidAdapter(AsteroidClick {
@@ -52,15 +56,9 @@ class MainFragment : Fragment() {
             adapter = asteroidAdapter
         }
 
-        setHasOptionsMenu(true)
-
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
+        binding.progressList.isVisible = true
         viewModel.asteroids.observe(viewLifecycleOwner, { asteroids ->
+            binding.progressList.isVisible = false
             asteroids?.let {
                 println("mmmmm asteroids size = ${asteroids.size}")
                 asteroidAdapter?.asteroids = asteroids
@@ -79,6 +77,13 @@ class MainFragment : Fragment() {
             viewModel.updateAsteroids()
             setInitialDataLoaded()
         }
+
+        setHasOptionsMenu(true)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

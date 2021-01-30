@@ -21,6 +21,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
+import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import com.udacity.asteroidradar.R
 
@@ -35,11 +36,14 @@ fun goneIfNotNull(view: View, it: Any?) {
 /**
  * Binding adapter used to display images from URL using Picasso
  */
-@BindingAdapter("imageUrl")
-fun setImageUrl(imageView: ImageView, url: String) {
-    Picasso.with(imageView.context).load(url)
+@BindingAdapter(value = ["imageUrl", "callback"], requireAll = false)
+fun setImageUrl(imageView: ImageView, imageUrl: String?, callback: ImageLoadCallback? = null) {
+    Picasso.with(imageView.context).load(imageUrl)
         .placeholder(R.drawable.placeholder)
-        .into(imageView)
+        .into(imageView, object: Callback {
+            override fun onSuccess() = callback?.onImageLoaded(true) ?: Unit
+            override fun onError() = callback?.onImageLoaded(false) ?: Unit
+        })
 }
 
 @BindingAdapter("statusIcon")
