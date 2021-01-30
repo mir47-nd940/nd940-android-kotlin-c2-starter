@@ -37,7 +37,9 @@ fun goneIfNotNull(view: View, it: Any?) {
  */
 @BindingAdapter("imageUrl")
 fun setImageUrl(imageView: ImageView, url: String) {
-    Picasso.with(imageView.context).load(url).into(imageView)
+    Picasso.with(imageView.context).load(url)
+        .placeholder(R.drawable.placeholder)
+        .into(imageView)
 }
 
 @BindingAdapter("statusIcon")
