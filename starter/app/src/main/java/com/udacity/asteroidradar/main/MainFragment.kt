@@ -1,19 +1,22 @@
 package com.udacity.asteroidradar.main
 
+import android.content.Context.MODE_PRIVATE
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.udacity.asteroidradar.R
 import com.udacity.asteroidradar.databinding.FragmentMainBinding
-import com.udacity.asteroidradar.repo.AllAsteroids
-import com.udacity.asteroidradar.repo.DailyAsteroids
-import com.udacity.asteroidradar.repo.WeeklyAsteroids
+import com.udacity.asteroidradar.repo.All
+import com.udacity.asteroidradar.repo.Daily
+import com.udacity.asteroidradar.repo.Weekly
 import com.udacity.asteroidradar.util.setImageUrl
 
+/**
+ * Main screen for displaying the image of the day and a list of asteroids.
+ */
 class MainFragment : Fragment() {
 
     private val viewModel: MainViewModel by lazy {
@@ -21,9 +24,9 @@ class MainFragment : Fragment() {
     }
 
     /**
-     * RecyclerView Adapter for converting a list of Asteroid to cards.
+     * RecyclerView Adapter for converting a list of asteroids to views.
      */
-    private var viewModelAdapter: AsteroidAdapter? = null
+    private var asteroidAdapter: AsteroidAdapter? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,18 +38,18 @@ class MainFragment : Fragment() {
 
         binding.viewModel = viewModel
 
-        viewModel.imageOfTheDay.observe(viewLifecycleOwner, Observer { image ->
+        viewModel.imageOfTheDay.observe(viewLifecycleOwner, { image ->
             image?.let { setImageUrl(binding.activityMainImageOfTheDay, it.url) }
         })
 
-        viewModelAdapter = AsteroidAdapter(AsteroidClick {
-            // When an asteroid is clicked this block or lambda will be called by AsteroidAdapter
+        asteroidAdapter = AsteroidAdapter(AsteroidClick {
+            // asteroid click handler
             findNavController().navigate(MainFragmentDirections.actionShowDetail(it))
         })
 
-        binding.asteroidRecycler.apply {
+        binding.list.apply {
             layoutManager = LinearLayoutManager(context)
-            adapter = viewModelAdapter
+            adapter = asteroidAdapter
         }
 
         setHasOptionsMenu(true)
@@ -56,14 +59,26 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.asteroids.observe(viewLifecycleOwner, Observer { asteroids ->
+
+        viewModel.asteroids.observe(viewLifecycleOwner, { asteroids ->
             asteroids?.let {
                 println("mmmmm asteroids size = ${asteroids.size}")
-                viewModelAdapter?.asteroids = asteroids
+                asteroidAdapter?.asteroids = asteroids
             } ?: run {
                 println("mmmmm asteroids null")
             }
         })
+
+        /**
+         * When app started for the first time, we should update asteroids from network, then
+         * daily updates will be handled by [com.udacity.asteroidradar.work.RefreshDataWorker]
+         */
+        if (isInitialDataLoaded()) {
+            viewModel.loadAsteroids(Weekly)
+        } else {
+            viewModel.updateAsteroids()
+            setInitialDataLoaded()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -73,10 +88,26 @@ class MainFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.next_week_asteroids -> viewModel.getFilteredAsteroids(WeeklyAsteroids)
-            R.id.today_asteroids -> viewModel.getFilteredAsteroids(DailyAsteroids)
-            R.id.saved_asteroids -> viewModel.getFilteredAsteroids(AllAsteroids)
+            R.id.next_week_asteroids -> viewModel.loadAsteroids(Weekly)
+            R.id.today_asteroids -> viewModel.loadAsteroids(Daily)
+            R.id.saved_asteroids -> viewModel.loadAsteroids(All)
         }
         return true
+    }
+
+    private fun isInitialDataLoaded(): Boolean {
+        val prefs = requireActivity().getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
+        return prefs.getBoolean(PREFS_KEY_IS_INITIAL_DATA_LOADED, false)
+    }
+
+    private fun setInitialDataLoaded() {
+        val editor = requireActivity().getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit()
+        editor.putBoolean(PREFS_KEY_IS_INITIAL_DATA_LOADED, true)
+        editor.apply()
+    }
+
+    companion object {
+        private const val PREFS_NAME = "ASTEROID_RADAR_PREFS"
+        private const val PREFS_KEY_IS_INITIAL_DATA_LOADED = "prefs_key_is_initial_data_loaded"
     }
 }

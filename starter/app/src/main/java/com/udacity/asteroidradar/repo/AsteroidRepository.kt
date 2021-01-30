@@ -1,11 +1,13 @@
 package com.udacity.asteroidradar.repo
 
-import androidx.lifecycle.*
-import com.udacity.asteroidradar.network.NasaApi
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import com.udacity.asteroidradar.db.AsteroidDatabase
 import com.udacity.asteroidradar.db.asDomainModel
 import com.udacity.asteroidradar.domain.Asteroid
 import com.udacity.asteroidradar.domain.ImageOfTheDay
+import com.udacity.asteroidradar.network.NasaApi
 import com.udacity.asteroidradar.network.asDatabaseModel
 import com.udacity.asteroidradar.network.parseAsteroidsJsonResult
 import com.udacity.asteroidradar.util.formatDate
@@ -16,21 +18,25 @@ import org.json.JSONObject
 import java.util.*
 
 sealed class AsteroidsFilter
-object WeeklyAsteroids : AsteroidsFilter()
-object DailyAsteroids : AsteroidsFilter()
-object AllAsteroids : AsteroidsFilter()
+object Weekly : AsteroidsFilter()
+object Daily : AsteroidsFilter()
+object All : AsteroidsFilter()
 
+// TODO: database can be injected using DI (hilt/koin/dagger), which we will learn about in a later lesson
 class AsteroidRepository(private val database: AsteroidDatabase) {
 
+    private val _today = formatDate(Calendar.getInstance().time)
+
     private val _asteroidsFilter: MutableLiveData<AsteroidsFilter> = MutableLiveData()
+
     /**
      * A list of asteroids that can be shown on the screen.
      */
     val asteroids: LiveData<List<Asteroid>> = Transformations.switchMap(_asteroidsFilter) { filter ->
         val list = when (filter) {
-            WeeklyAsteroids -> database.asteroidDao.getFrom(formatDate(Calendar.getInstance().time))
-            DailyAsteroids -> database.asteroidDao.getFor(formatDate(Calendar.getInstance().time))
-            AllAsteroids -> database.asteroidDao.getAll()
+            Weekly -> database.asteroidDao.getFrom(_today)
+            Daily -> database.asteroidDao.getFor(_today)
+            All -> database.asteroidDao.getAll()
         }
         Transformations.map(list) { it.asDomainModel() }
     }
@@ -61,9 +67,12 @@ class AsteroidRepository(private val database: AsteroidDatabase) {
 
                 val networkAsteroids = parseAsteroidsJsonResult(jsonObject, dates)
                 database.asteroidDao.insertAll(networkAsteroids.asDatabaseModel())
+
+                _asteroidsFilter.postValue(Weekly)
             } catch (e: Exception) {
                 // Prevent app crash, in case there is an error loading data
                 // TODO: these type of errors should be reported to a crash reporting service e.g. Firebase Crashlytics
+                // TODO: log using Timber
                 println(e)
             }
         }
@@ -89,10 +98,11 @@ class AsteroidRepository(private val database: AsteroidDatabase) {
             } catch (e: Exception) {
                 // Prevent app crash, in case there is an error loading data.
                 // TODO: these type of errors should be reported to a crash reporting service e.g. Firebase Crashlytics
+                // TODO: log using Timber
                 println(e)
             }
         }
     }
 
-    fun getFilteredAsteroids(filter: AsteroidsFilter) = _asteroidsFilter.postValue(filter)
+    fun loadAsteroids(filter: AsteroidsFilter) = _asteroidsFilter.postValue(filter)
 }
