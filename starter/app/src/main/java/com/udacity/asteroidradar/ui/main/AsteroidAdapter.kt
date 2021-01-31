@@ -9,7 +9,7 @@ import com.udacity.asteroidradar.databinding.ItemAsteroidBinding
 import com.udacity.asteroidradar.domain.Asteroid
 
 // TODO: For an extra challenge, update this to use the paging library.
-// For now, we will use the standard ListAdapter from the the RecyclerView lesson.
+//  For now, we will use the standard ListAdapter from the the RecyclerView lesson.
 class AsteroidAdapter(private val listener: AsteroidListEvents) :
     ListAdapter<Asteroid, AsteroidAdapter.AsteroidViewHolder>(ASTEROID_COMPARATOR) {
 
