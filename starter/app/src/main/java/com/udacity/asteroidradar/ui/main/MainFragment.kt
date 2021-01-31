@@ -41,7 +41,8 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         binding.progressImage.isVisible = true
         viewModel.imageOfTheDay.observe(viewLifecycleOwner, { image ->
             image?.let {
-                binding.imageOfTheDay.contentDescription = it.title
+                binding.imageOfTheDay.contentDescription =
+                    String.format(getString(R.string.content_description_image_of_the_day), it.title)
                 setImageUrl(binding.imageOfTheDay, it.url) {
                     binding.progressImage.isVisible = false
                 }
