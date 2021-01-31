@@ -29,6 +29,8 @@ import com.udacity.asteroidradar.R
  */
 @BindingAdapter(value = ["imageUrl", "callback"], requireAll = false)
 fun setImageUrl(imageView: ImageView, imageUrl: String?, callback: ImageLoadCallback? = null) {
+    // Note: Picasso could be replaced with Glide (https://bumptech.github.io/glide/) or
+    // Coil (https://github.com/coil-kt/coil), however Picasso is recommended for this project.
     Picasso.with(imageView.context).load(imageUrl)
         .placeholder(R.drawable.placeholder)
         .into(imageView, object: Callback {
