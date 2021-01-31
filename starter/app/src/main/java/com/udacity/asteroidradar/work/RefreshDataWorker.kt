@@ -17,7 +17,7 @@ class RefreshDataWorker(appContext: Context, params: WorkerParameters):
 
     override suspend fun doWork(): Result {
         val database = AsteroidDatabase.getInstance(applicationContext)
-        val repository = AsteroidRepository(database)
+        val repository = AsteroidRepository(database.asteroidDao, database.imageDao)
 
         return try {
             val dates = getNextSevenDaysFormattedDates()
