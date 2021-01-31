@@ -1,7 +1,14 @@
-package com.udacity.asteroidradar.api
+package com.udacity.asteroidradar.util
 
+import com.udacity.asteroidradar.api.NetworkAsteroid
 import org.json.JSONObject
 
+/**
+ * Method to manually parse the JSON data, since it contains JSON arrays (containing
+ * asteroid data per day) that are dynamically named by date, which makes it difficult
+ * to map to static objects with the Moshi converter. It may be possible to parse the
+ * dynamic arrays as a Map<String, Array<Object>>, but further investigation is needed.
+ */
 fun parseAsteroidsJsonResult(
     jsonResult: JSONObject,
     dateList: ArrayList<String>
