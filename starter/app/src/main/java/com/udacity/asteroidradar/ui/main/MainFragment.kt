@@ -13,10 +13,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.udacity.asteroidradar.R
 import com.udacity.asteroidradar.databinding.FragmentMainBinding
-import com.udacity.asteroidradar.domain.Asteroid
-import com.udacity.asteroidradar.domain.All
-import com.udacity.asteroidradar.domain.Daily
-import com.udacity.asteroidradar.domain.Weekly
+import com.udacity.asteroidradar.db.AsteroidDatabase
+import com.udacity.asteroidradar.domain.*
 import com.udacity.asteroidradar.util.setImageUrl
 
 /**
@@ -28,7 +26,10 @@ class MainFragment : Fragment(R.layout.fragment_main) {
     private val binding get() = _binding!!
 
     private val viewModel: MainViewModel by lazy {
-        ViewModelProvider(this).get(MainViewModel::class.java)
+        val database = AsteroidDatabase.getInstance(requireContext())
+        val repository = AsteroidRepository(database.asteroidDao, database.imageDao)
+        val viewModelFactory = MainViewModelFactory(repository)
+        ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

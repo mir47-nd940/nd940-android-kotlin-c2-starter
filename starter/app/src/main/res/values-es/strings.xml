@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Radar de asteroides</string>
+    <string name="main_title">Asteroides</string>
+    <string name="detail_title">Asteroides Detail</string>
     <string name="next_week_asteroids">Ver asteroides de la semana</string>
     <string name="today_asteroids">Ver asteroides de hoy</string>
     <string name="saved_asteroids">Ver asteroides guardados</string>

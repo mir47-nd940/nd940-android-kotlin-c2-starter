@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Asteroid Radar</string>
+    <string name="main_title">Asteroids</string>
+    <string name="detail_title">Asteroid Detail</string>
     <string name="next_week_asteroids">View week asteroids</string>
     <string name="today_asteroids">View today asteroids</string>
     <string name="saved_asteroids">View saved asteroids</string>

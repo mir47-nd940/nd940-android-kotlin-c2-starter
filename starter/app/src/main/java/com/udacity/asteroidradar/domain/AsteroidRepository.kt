@@ -3,14 +3,13 @@ package com.udacity.asteroidradar.domain
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
-import com.udacity.asteroidradar.db.AsteroidDatabase
-import com.udacity.asteroidradar.db.asDomainModel
 import com.udacity.asteroidradar.api.NasaApi
 import com.udacity.asteroidradar.api.asDatabaseModel
-import com.udacity.asteroidradar.util.parseAsteroidsJsonResult
+import com.udacity.asteroidradar.db.AsteroidDao
+import com.udacity.asteroidradar.db.ImageDao
+import com.udacity.asteroidradar.db.asDomainModel
 import com.udacity.asteroidradar.util.formatDate
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import com.udacity.asteroidradar.util.parseAsteroidsJsonResult
 import org.json.JSONObject
 import timber.log.Timber
 import java.util.*
@@ -20,9 +19,7 @@ object Weekly : AsteroidsFilter()
 object Daily : AsteroidsFilter()
 object All : AsteroidsFilter()
 
-// TODO: the database object could be injected using DI (hilt/koin/dagger),
-//  we will learn about this in a later lesson.
-class AsteroidRepository(private val database: AsteroidDatabase) {
+class AsteroidRepository(private val asteroidDao: AsteroidDao, private val imageDao: ImageDao) {
 
     private val _today = formatDate(Calendar.getInstance().time)
 
@@ -33,9 +30,9 @@ class AsteroidRepository(private val database: AsteroidDatabase) {
      */
     val asteroids: LiveData<List<Asteroid>> = Transformations.switchMap(_asteroidsFilter) { filter ->
         val list = when (filter) {
-            Weekly -> database.asteroidDao.getFromDate(_today)
-            Daily -> database.asteroidDao.getFor(_today)
-            All -> database.asteroidDao.getAll()
+            Weekly -> asteroidDao.getFromDate(_today)
+            Daily -> asteroidDao.getFor(_today)
+            All -> asteroidDao.getAll()
         }
         Transformations.map(list) { it.asDomainModel() }
     }
@@ -44,7 +41,7 @@ class AsteroidRepository(private val database: AsteroidDatabase) {
      * Image data to be loaded into an image view.
      */
     val imageOfTheDay: LiveData<ImageOfTheDay> =
-        Transformations.map(database.imageDao.get()) { it?.asDomainModel() }
+        Transformations.map(imageDao.get()) { it?.asDomainModel() }
 
     /**
      * Refresh the asteroids stored in the offline cache.
@@ -56,27 +53,25 @@ class AsteroidRepository(private val database: AsteroidDatabase) {
      * To actually load the asteroids for use, observe [asteroids]
      */
     suspend fun refreshAsteroids(dates: ArrayList<String>) {
-        withContext(Dispatchers.IO) {
-            try {
-                val json = NasaApi.retrofitService.getNeoJson(dates.first(), dates.last())
+        try {
+            val json = NasaApi.retrofitService.getNeoJson(dates.first(), dates.last())
 
-                @Suppress("BlockingMethodInNonBlockingContext")
-                val jsonObject = JSONObject(json.body()?.string() ?: "")
+            @Suppress("BlockingMethodInNonBlockingContext")
+            val jsonObject = JSONObject(json.body()?.string() ?: "")
 
-                val networkAsteroids = parseAsteroidsJsonResult(jsonObject, dates)
-                database.asteroidDao.insertAll(networkAsteroids.asDatabaseModel())
+            val networkAsteroids = parseAsteroidsJsonResult(jsonObject, dates)
+            asteroidDao.insertAll(networkAsteroids.asDatabaseModel())
 
-                _asteroidsFilter.postValue(Weekly)
-            } catch (e: Exception) {
-                // Prevent app crash, in case there is an error loading data
-                // TODO: these type of errors should be reported to a crash reporting service e.g. Firebase Crashlytics
-                Timber.e(e)
-            }
+            _asteroidsFilter.postValue(Weekly)
+        } catch (e: Exception) {
+            // Prevent app crash, in case there is an error loading data
+            // TODO: these type of errors should be reported to a crash reporting service e.g. Firebase Crashlytics
+            Timber.e(e)
         }
     }
 
     suspend fun purgeAsteroidsBeforeDate(date: String) {
-        database.asteroidDao.deleteBeforeDate(date)
+        asteroidDao.deleteBeforeDate(date)
     }
 
     /**
@@ -89,18 +84,16 @@ class AsteroidRepository(private val database: AsteroidDatabase) {
      * To actually load the asteroids for use, observe [asteroids]
      */
     suspend fun refreshImage() {
-        withContext(Dispatchers.IO) {
-            try {
-                val image = NasaApi.retrofitService.getImageInfo()
-                if ("image" == image.mediaType) {
-                    database.imageDao.clear()
-                    database.imageDao.insert(image.asDatabaseModel())
-                }
-            } catch (e: Exception) {
-                // Prevent app crash, in case there is an error loading data.
-                // TODO: these type of errors should be reported to a crash reporting service e.g. Firebase Crashlytics
-                Timber.e(e)
+        try {
+            val image = NasaApi.retrofitService.getImageInfo()
+            if ("image" == image.mediaType) {
+                imageDao.clear()
+                imageDao.insert(image.asDatabaseModel())
             }
+        } catch (e: Exception) {
+            // Prevent app crash, in case there is an error loading data.
+            // TODO: these type of errors should be reported to a crash reporting service e.g. Firebase Crashlytics
+            Timber.e(e)
         }
     }
 

@@ -7,7 +7,7 @@
     <fragment
         android:id="@+id/mainFragment"
         android:name="com.udacity.asteroidradar.ui.main.MainFragment"
-        android:label="Asteroids"
+        android:label="@string/main_title"
         tools:layout="@layout/fragment_main">
         <action
             android:id="@+id/action_showDetail"
@@ -21,7 +21,7 @@
     <fragment
         android:id="@+id/detailFragment"
         android:name="com.udacity.asteroidradar.ui.detail.DetailFragment"
-        android:label="Asteroid Detail"
+        android:label="@string/detail_title"
         tools:layout="@layout/fragment_detail">
 
         <argument
