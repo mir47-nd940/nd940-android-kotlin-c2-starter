@@ -29,14 +29,9 @@ private val retrofit = Retrofit.Builder()
     .build()
 
 /**
- * A public interface that exposes the [getProperties] method
+ * A public interface that exposes the API methods
  */
 interface NasaApiService {
-    /**
-     * Returns a Coroutine [List] of [MarsProperty] which can be fetched with await() if in a Coroutine scope.
-     * The @GET annotation indicates that the "realestate" endpoint will be requested with the GET
-     * HTTP method
-     */
     @GET("neo/rest/v1/feed")
     suspend fun getNeoJson(
         @Query("start_date") startDate: String,
@@ -44,9 +39,6 @@ interface NasaApiService {
         @Query("api_key") apiKey: String = BuildConfig.NASA_API_KEY
     ): Response<ResponseBody>
 
-    /**
-     *
-     */
     @GET("planetary/apod")
     suspend fun getImageInfo(
         @Query("api_key") apiKey: String = BuildConfig.NASA_API_KEY

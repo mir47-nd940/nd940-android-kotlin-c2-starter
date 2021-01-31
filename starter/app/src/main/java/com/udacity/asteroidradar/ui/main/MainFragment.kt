@@ -14,9 +14,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.udacity.asteroidradar.R
 import com.udacity.asteroidradar.databinding.FragmentMainBinding
 import com.udacity.asteroidradar.domain.Asteroid
-import com.udacity.asteroidradar.repo.All
-import com.udacity.asteroidradar.repo.Daily
-import com.udacity.asteroidradar.repo.Weekly
+import com.udacity.asteroidradar.domain.All
+import com.udacity.asteroidradar.domain.Daily
+import com.udacity.asteroidradar.domain.Weekly
 import com.udacity.asteroidradar.util.setImageUrl
 
 /**

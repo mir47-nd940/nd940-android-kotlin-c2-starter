@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.udacity.asteroidradar.db.AsteroidDatabase
-import com.udacity.asteroidradar.repo.AsteroidRepository
+import com.udacity.asteroidradar.domain.AsteroidRepository
 import com.udacity.asteroidradar.util.getNextSevenDaysFormattedDates
 import retrofit2.HttpException
 

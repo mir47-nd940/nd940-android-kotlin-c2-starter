@@ -1,12 +1,10 @@
-package com.udacity.asteroidradar.repo
+package com.udacity.asteroidradar.domain
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import com.udacity.asteroidradar.db.AsteroidDatabase
 import com.udacity.asteroidradar.db.asDomainModel
-import com.udacity.asteroidradar.domain.Asteroid
-import com.udacity.asteroidradar.domain.ImageOfTheDay
 import com.udacity.asteroidradar.api.NasaApi
 import com.udacity.asteroidradar.api.asDatabaseModel
 import com.udacity.asteroidradar.api.parseAsteroidsJsonResult
@@ -22,7 +20,8 @@ object Weekly : AsteroidsFilter()
 object Daily : AsteroidsFilter()
 object All : AsteroidsFilter()
 
-// TODO: database can be injected using DI (hilt/koin/dagger), which we will learn about in a later lesson
+// TODO: the database object could be injected using DI (hilt/koin/dagger),
+//  we will learn about this in a later lesson.
 class AsteroidRepository(private val database: AsteroidDatabase) {
 
     private val _today = formatDate(Calendar.getInstance().time)
@@ -42,7 +41,7 @@ class AsteroidRepository(private val database: AsteroidDatabase) {
     }
 
     /**
-     * A list of asteroids that can be shown on the screen.
+     * Image data to be loaded into an image view.
      */
     val imageOfTheDay: LiveData<ImageOfTheDay> =
         Transformations.map(database.imageDao.get()) { it?.asDomainModel() }
