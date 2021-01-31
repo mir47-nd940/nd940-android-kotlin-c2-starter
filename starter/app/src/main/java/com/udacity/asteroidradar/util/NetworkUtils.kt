@@ -1,20 +1,23 @@
-package com.udacity.asteroidradar.api
+package com.udacity.asteroidradar.util
 
-import com.udacity.asteroidradar.Asteroid
-import com.udacity.asteroidradar.Constants
+import com.udacity.asteroidradar.api.NetworkAsteroid
 import org.json.JSONObject
-import java.text.SimpleDateFormat
-import java.util.*
-import kotlin.collections.ArrayList
 
-fun parseAsteroidsJsonResult(jsonResult: JSONObject): ArrayList<Asteroid> {
+/**
+ * Method to manually parse the JSON data, since it contains JSON arrays (containing
+ * asteroid data per day) that are dynamically named by date, which makes it difficult
+ * to map to static objects with the Moshi converter. It may be possible to parse the
+ * dynamic arrays as a Map<String, Array<Object>>, but further investigation is needed.
+ */
+fun parseAsteroidsJsonResult(
+    jsonResult: JSONObject,
+    dateList: ArrayList<String>
+): ArrayList<NetworkAsteroid> {
     val nearEarthObjectsJson = jsonResult.getJSONObject("near_earth_objects")
+    val asteroidNeoList = ArrayList<NetworkAsteroid>()
 
-    val asteroidList = ArrayList<Asteroid>()
-
-    val nextSevenDaysFormattedDates = getNextSevenDaysFormattedDates()
-    for (formattedDate in nextSevenDaysFormattedDates) {
-        val dateAsteroidJsonArray = nearEarthObjectsJson.getJSONArray(formattedDate)
+    for (date in dateList) {
+        val dateAsteroidJsonArray = nearEarthObjectsJson.getJSONArray(date)
 
         for (i in 0 until dateAsteroidJsonArray.length()) {
             val asteroidJson = dateAsteroidJsonArray.getJSONObject(i)
@@ -33,25 +36,11 @@ fun parseAsteroidsJsonResult(jsonResult: JSONObject): ArrayList<Asteroid> {
             val isPotentiallyHazardous = asteroidJson
                 .getBoolean("is_potentially_hazardous_asteroid")
 
-            val asteroid = Asteroid(id, codename, formattedDate, absoluteMagnitude,
+            val asteroidNeo = NetworkAsteroid(id, codename, date, absoluteMagnitude,
                 estimatedDiameter, relativeVelocity, distanceFromEarth, isPotentiallyHazardous)
-            asteroidList.add(asteroid)
+            asteroidNeoList.add(asteroidNeo)
         }
     }
 
-    return asteroidList
-}
-
-private fun getNextSevenDaysFormattedDates(): ArrayList<String> {
-    val formattedDateList = ArrayList<String>()
-
-    val calendar = Calendar.getInstance()
-    for (i in 0..Constants.DEFAULT_END_DATE_DAYS) {
-        val currentTime = calendar.time
-        val dateFormat = SimpleDateFormat(Constants.API_QUERY_DATE_FORMAT, Locale.getDefault())
-        formattedDateList.add(dateFormat.format(currentTime))
-        calendar.add(Calendar.DAY_OF_YEAR, 1)
-    }
-
-    return formattedDateList
+    return asteroidNeoList
 }

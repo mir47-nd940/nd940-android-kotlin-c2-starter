@@ -1,8 +1,27 @@
-package com.udacity.asteroidradar
+package com.udacity.asteroidradar.util
 
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
+import com.squareup.picasso.Callback
+import com.squareup.picasso.Picasso
+import com.udacity.asteroidradar.R
+
+/**
+ * Binding adapter used to display images from URL using Picasso
+ */
+@BindingAdapter(value = ["imageUrl", "callback"], requireAll = false)
+fun setImageUrl(imageView: ImageView, imageUrl: String?, callback: ImageLoadCallback? = null) {
+    // Note: Picasso could be replaced with Glide (https://bumptech.github.io/glide/)
+    // or Coil (https://github.com/coil-kt/coil), however the project instructions
+    // recommend to use Picasso for this project.
+    Picasso.with(imageView.context).load(imageUrl)
+        .placeholder(R.drawable.placeholder)
+        .into(imageView, object: Callback {
+            override fun onSuccess() = callback?.onImageLoaded(true) ?: Unit
+            override fun onError() = callback?.onImageLoaded(false) ?: Unit
+        })
+}
 
 @BindingAdapter("statusIcon")
 fun bindAsteroidStatusImage(imageView: ImageView, isHazardous: Boolean) {

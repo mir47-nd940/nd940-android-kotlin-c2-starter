@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">Radar de asteroides</string>
+    <string name="main_title">Asteroides</string>
+    <string name="detail_title">Asteroides Detail</string>
+    <string name="next_week_asteroids">Ver asteroides de la semana</string>
+    <string name="today_asteroids">Ver asteroides de hoy</string>
+    <string name="saved_asteroids">Ver asteroides guardados</string>
+    <string name="close_approach_data_title">Fecha de aproximación cercana</string>
+    <string name="absolute_magnitude_title">Magnitud absoluta</string>
+    <string name="estimated_diameter_title">Diámetro estimado</string>
+    <string name="relative_velocity_title">Velocidad relativa</string>
+    <string name="distance_from_earth_title">Distancia de la tierra</string>
+    <string name="image_of_the_day">Imagen del dia</string>
+    <string name="astronomica_unit_explanation">La unidad astronómica (au) es una unidad de longitud, aproximadamente la distancia de la Tierra al Sol e igual a unos 150 millones de kilómetros (93 millones de millas).</string>
+    <string name="astronomical_unit_explanation_button">Definición de unidad astronómica</string>
+    <string name="potentially_hazardous_asteroid_image">Imagen de asteroide potencialmente peligrosa</string>
+    <string name="not_hazardous_asteroid_image">Imagen de asteroide no peligrosa</string>
+    <string name="this_is_nasa_s_picture_of_day_showing_nothing_yet">Esta es la foto del día de la NASA, que aún no muestra nada</string>
+    <string name="nasa_picture_of_day_content_description_format">Foto del día de la NASA: %s</string>
+    <string name="content_description_image_of_the_day">La imagen del día es: %s</string>
+    <string name="content_description_absolute_magnitude">Magnitud absoluta: haga clic para averiguar qué es esto</string>
+    <string name="content_description_image_hazardous">Imagen de asteroide peligroso</string>
+    <string name="content_description_image_non_hazardous">Imagen de un asteroide no peligroso</string>
+</resources>
