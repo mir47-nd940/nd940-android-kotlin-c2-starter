@@ -22,6 +22,10 @@ class DetailFragment : Fragment() {
 
         binding.asteroid = asteroid
 
+        binding.imageDetail.contentDescription = getString(
+            if (asteroid.isPotentiallyHazardous) R.string.content_description_image_hazardous
+            else R.string.content_description_image_non_hazardous
+        )
         binding.textAbsoluteMagnitude.setOnClickListener {
             displayAstronomicalUnitExplanationDialog()
         }

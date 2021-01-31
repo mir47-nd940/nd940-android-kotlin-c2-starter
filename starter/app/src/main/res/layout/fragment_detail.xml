@@ -17,6 +17,7 @@
         android:orientation="vertical">
 
         <ImageView
+            android:id="@+id/image_detail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
@@ -53,6 +54,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_normal"
+                    android:contentDescription="@string/content_description_absolute_magnitude"
                     android:text="@string/absolute_magnitude_title"
                     android:textAppearance="@style/ItemTitle"
                     app:drawableRightCompat="@drawable/ic_help_circle" />
