@@ -11,7 +11,6 @@ import com.udacity.asteroidradar.db.asDomainModel
 import com.udacity.asteroidradar.util.formatDate
 import com.udacity.asteroidradar.util.parseAsteroidsJsonResult
 import org.json.JSONObject
-import timber.log.Timber
 import java.util.*
 
 sealed class AsteroidsFilter
@@ -28,14 +27,15 @@ class AsteroidRepository(private val asteroidDao: AsteroidDao, private val image
     /**
      * A list of asteroids that can be shown on the screen.
      */
-    val asteroids: LiveData<List<Asteroid>> = Transformations.switchMap(_asteroidsFilter) { filter ->
-        val list = when (filter) {
-            Weekly -> asteroidDao.getFromDate(_today)
-            Daily -> asteroidDao.getFor(_today)
-            All -> asteroidDao.getAll()
+    val asteroids: LiveData<List<Asteroid>> =
+        Transformations.switchMap(_asteroidsFilter) { filter ->
+            val list = when (filter) {
+                Weekly -> asteroidDao.getFromDate(_today)
+                Daily -> asteroidDao.getFor(_today)
+                All -> asteroidDao.getAll()
+            }
+            Transformations.map(list) { it.asDomainModel() }
         }
-        Transformations.map(list) { it.asDomainModel() }
-    }
 
     /**
      * Image data to be loaded into an image view.
@@ -53,21 +53,15 @@ class AsteroidRepository(private val asteroidDao: AsteroidDao, private val image
      * To actually load the asteroids for use, observe [asteroids]
      */
     suspend fun refreshAsteroids(dates: ArrayList<String>) {
-        try {
-            val json = NasaApi.retrofitService.getNeoJson(dates.first(), dates.last())
+        val json = NasaApi.retrofitService.getNeoJson(dates.first(), dates.last())
 
-            @Suppress("BlockingMethodInNonBlockingContext")
-            val jsonObject = JSONObject(json.body()?.string() ?: "")
+        @Suppress("BlockingMethodInNonBlockingContext")
+        val jsonObject = JSONObject(json.body()?.string() ?: "")
 
-            val networkAsteroids = parseAsteroidsJsonResult(jsonObject, dates)
-            asteroidDao.insertAll(networkAsteroids.asDatabaseModel())
+        val networkAsteroids = parseAsteroidsJsonResult(jsonObject, dates)
+        asteroidDao.insertAll(networkAsteroids.asDatabaseModel())
 
-            _asteroidsFilter.postValue(Weekly)
-        } catch (e: Exception) {
-            // Prevent app crash, in case there is an error loading data
-            // TODO: these type of errors should be reported to a crash reporting service e.g. Firebase Crashlytics
-            Timber.e(e)
-        }
+        _asteroidsFilter.postValue(Weekly)
     }
 
     suspend fun purgeAsteroidsBeforeDate(date: String) {
@@ -84,16 +78,10 @@ class AsteroidRepository(private val asteroidDao: AsteroidDao, private val image
      * To actually load the asteroids for use, observe [asteroids]
      */
     suspend fun refreshImage() {
-        try {
-            val image = NasaApi.retrofitService.getImageInfo()
-            if ("image" == image.mediaType) {
-                imageDao.clear()
-                imageDao.insert(image.asDatabaseModel())
-            }
-        } catch (e: Exception) {
-            // Prevent app crash, in case there is an error loading data.
-            // TODO: these type of errors should be reported to a crash reporting service e.g. Firebase Crashlytics
-            Timber.e(e)
+        val image = NasaApi.retrofitService.getImageInfo()
+        if ("image" == image.mediaType) {
+            imageDao.clear()
+            imageDao.insert(image.asDatabaseModel())
         }
     }
 

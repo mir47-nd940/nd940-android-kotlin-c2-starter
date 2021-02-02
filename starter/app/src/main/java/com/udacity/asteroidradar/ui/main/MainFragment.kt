@@ -39,13 +39,14 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
         binding.viewModel = viewModel
 
-        binding.progressImage.isVisible = true
+        binding.imageProgress.isVisible = true
         viewModel.imageOfTheDay.observe(viewLifecycleOwner, { image ->
             image?.let {
                 binding.imageOfTheDay.contentDescription =
                     String.format(getString(R.string.content_description_image_of_the_day), it.title)
-                setImageUrl(binding.imageOfTheDay, it.url) {
-                    binding.progressImage.isVisible = false
+                setImageUrl(binding.imageOfTheDay, it.url) { result ->
+                    binding.imageError.isVisible = !result
+                    binding.imageProgress.isVisible = false
                 }
             }
         })
@@ -65,19 +66,28 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             adapter = asteroidAdapter
         }
 
-        binding.progressList.isVisible = true
         viewModel.asteroids.observe(viewLifecycleOwner, { asteroids ->
-            binding.progressList.isVisible = false
-            asteroids?.let { asteroidAdapter.submitList(it) }
+            asteroids?.let {
+                if (asteroids.isNotEmpty()) {
+                    if (!isInitialDataLoaded()) setInitialDataLoaded()
+                    asteroidAdapter.submitList(it)
+                } else {
+                    // TODO: show empty state
+                }
+            } ?: run {
+                // TODO: show error state
+            }
         })
 
         /**
          * When app started for the first time, we should update asteroids from network, then
          * daily updates will be handled by [com.udacity.asteroidradar.work.RefreshDataWorker]
          */
-        if (!isInitialDataLoaded()) {
+        if (isInitialDataLoaded()) {
+            viewModel.loadAsteroids(Weekly)
+        } else {
             viewModel.updateAsteroids()
-            setInitialDataLoaded()
+            viewModel.updateImage()
         }
 
         setHasOptionsMenu(true)

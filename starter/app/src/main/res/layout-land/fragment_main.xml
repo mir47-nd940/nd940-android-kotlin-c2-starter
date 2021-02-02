@@ -24,18 +24,30 @@
             android:scaleType="centerCrop"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/placeholder"
             tools:srcCompat="@drawable/placeholder" />
 
         <ProgressBar
-            android:id="@+id/progress_image"
+            android:id="@+id/image_progress"
             android:layout_width="@dimen/spacing_normal"
             android:layout_height="@dimen/spacing_normal"
-            android:layout_gravity="bottom|end"
             android:layout_margin="@dimen/spacing_half"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/image_of_the_day"
             app:layout_constraintEnd_toEndOf="@id/image_of_the_day"
             app:layout_constraintTop_toTopOf="@id/image_text"
+            tools:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/image_error"
+            android:layout_width="@dimen/spacing_normal"
+            android:layout_height="@dimen/spacing_normal"
+            android:layout_margin="@dimen/spacing_half"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/image_of_the_day"
+            app:layout_constraintEnd_toEndOf="@id/image_of_the_day"
+            app:layout_constraintTop_toTopOf="@id/image_text"
+            app:srcCompat="@android:drawable/ic_dialog_alert"
             tools:visibility="visible" />
 
         <TextView
@@ -48,7 +60,7 @@
             android:text="@string/image_of_the_day"
             android:textAppearance="@style/TextMain"
             app:layout_constraintBottom_toBottomOf="@+id/image_of_the_day"
-            app:layout_constraintEnd_toStartOf="@id/progress_image"
+            app:layout_constraintEnd_toStartOf="@id/image_progress"
             app:layout_constraintStart_toStartOf="parent" />
 
         <androidx.recyclerview.widget.RecyclerView
@@ -62,15 +74,25 @@
             tools:listitem="@layout/item_asteroid" />
 
         <ProgressBar
-            android:id="@+id/progress_list"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:indeterminate="true"
-            android:visibility="gone"
+            app:bindVisible="@{viewModel.showListProgress}"
             app:layout_constraintBottom_toBottomOf="@id/list"
             app:layout_constraintEnd_toEndOf="@id/list"
             app:layout_constraintStart_toStartOf="@id/list"
             app:layout_constraintTop_toTopOf="@id/list"
             tools:visibility="visible" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:bindVisible="@{viewModel.showListError}"
+            app:layout_constraintBottom_toBottomOf="@id/list"
+            app:layout_constraintEnd_toEndOf="@id/list"
+            app:layout_constraintStart_toStartOf="@id/list"
+            app:layout_constraintTop_toTopOf="@id/list"
+            app:srcCompat="@android:drawable/ic_dialog_alert" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

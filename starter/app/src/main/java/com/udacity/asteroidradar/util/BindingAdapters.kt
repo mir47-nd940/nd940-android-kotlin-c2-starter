@@ -1,7 +1,9 @@
 package com.udacity.asteroidradar.util
 
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.databinding.BindingAdapter
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
@@ -57,4 +59,9 @@ fun bindTextViewToKmUnit(textView: TextView, number: Double) {
 fun bindTextViewToDisplayVelocity(textView: TextView, number: Double) {
     val context = textView.context
     textView.text = String.format(context.getString(R.string.km_s_unit_format), number)
+}
+
+@BindingAdapter("bindVisible")
+fun bindVisible(view: View, isVisible: Boolean?) {
+    view.isVisible = isVisible ?: false
 }
