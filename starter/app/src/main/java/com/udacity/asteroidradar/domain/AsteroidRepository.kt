@@ -79,7 +79,7 @@ class AsteroidRepository(private val asteroidDao: AsteroidDao, private val image
      */
     suspend fun refreshImage() {
         val image = NasaApi.retrofitService.getImageInfo()
-        if ("image" == image.mediaType) {
+        if (image.isImageType) {
             imageDao.clear()
             imageDao.insert(image.asDatabaseModel())
         }

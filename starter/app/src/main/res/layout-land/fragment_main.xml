@@ -77,17 +77,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:indeterminate="true"
-            app:bindVisible="@{viewModel.showListProgress}"
+            app:apiStatus="@{viewModel.status}"
             app:layout_constraintBottom_toBottomOf="@id/list"
             app:layout_constraintEnd_toEndOf="@id/list"
             app:layout_constraintStart_toStartOf="@id/list"
-            app:layout_constraintTop_toTopOf="@id/list"
-            tools:visibility="visible" />
+            app:layout_constraintTop_toTopOf="@id/list" />
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:bindVisible="@{viewModel.showListError}"
+            app:apiStatus="@{viewModel.status}"
             app:layout_constraintBottom_toBottomOf="@id/list"
             app:layout_constraintEnd_toEndOf="@id/list"
             app:layout_constraintStart_toStartOf="@id/list"

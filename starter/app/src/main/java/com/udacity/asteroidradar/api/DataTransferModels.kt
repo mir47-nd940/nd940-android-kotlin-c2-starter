@@ -20,7 +20,10 @@ data class NetworkPictureOfDay(
     val mediaType: String,
     val title: String,
     val url: String
-)
+) {
+    val isImageType
+        get() = mediaType == "image"
+}
 
 fun List<NetworkAsteroid>.asDatabaseModel(): List<AsteroidEntity> {
     return map {

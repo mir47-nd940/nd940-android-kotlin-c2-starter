@@ -9,35 +9,37 @@ import com.udacity.asteroidradar.util.getNextSevenDaysFormattedDates
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
+enum class NasaApiStatus { LOADING, ERROR, DONE }
+
 /**
  * The [ViewModel] that is attached to the [MainFragment].
  */
 class MainViewModel(private val asteroidRepository: AsteroidRepository) : ViewModel() {
+    // The internal MutableLiveData that stores the status of the most recent request
+    private val _status = MutableLiveData<NasaApiStatus>()
+
+    // The external immutable LiveData for the request status
+    val status: LiveData<NasaApiStatus>
+        get() = _status
+
     val asteroids: LiveData<List<Asteroid>>
         get() = asteroidRepository.asteroids
 
     val imageOfTheDay: LiveData<ImageOfTheDay>
         get() = asteroidRepository.imageOfTheDay
 
-    private val _showListProgress = MutableLiveData(false)
-    val showListProgress: LiveData<Boolean> = _showListProgress
-
-    private val _showListError = MutableLiveData(false)
-    val showListError: LiveData<Boolean> = _showListError
-
     fun loadAsteroids(filter: AsteroidsFilter) = asteroidRepository.loadAsteroids(filter)
 
     fun updateAsteroids() = viewModelScope.launch {
         try {
-            _showListProgress.value = true
+            _status.value = NasaApiStatus.LOADING
             asteroidRepository.refreshAsteroids(getNextSevenDaysFormattedDates())
-            _showListProgress.value = false
+            _status.value = NasaApiStatus.DONE
         } catch (e: Exception) {
             // Prevent app crash, in case there is an error loading data
-            _showListProgress.value = false
-            _showListError.value = true
             // TODO: report error to crash reporting service e.g. Firebase Crashlytics
             Timber.e(e)
+            _status.value = NasaApiStatus.ERROR
         }
     }
 
