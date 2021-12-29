@@ -28,7 +28,7 @@ class AsteroidApplication : Application() {
     private fun setupRecurringWork() {
         val repeatingRequest = PeriodicWorkRequestBuilder<RefreshDataWorker>(
                 1,
-                TimeUnit.MINUTES
+                TimeUnit.DAYS
         ).build()
 
         WorkManager.getInstance(applicationContext).enqueue(repeatingRequest)
